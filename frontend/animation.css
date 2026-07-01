@@ -1,0 +1,77 @@
+.container{
+
+animation:zoom 1s ease;
+
+}
+
+.left{
+
+animation:slideLeft 1.2s;
+
+}
+
+.right{
+
+animation:slideRight 1.2s;
+
+}
+
+@keyframes zoom{
+
+from{
+
+transform:scale(.8);
+
+opacity:0;
+
+}
+
+to{
+
+transform:scale(1);
+
+opacity:1;
+
+}
+
+}
+
+@keyframes slideLeft{
+
+from{
+
+transform:translateX(-100px);
+
+opacity:0;
+
+}
+
+to{
+
+transform:translateX(0);
+
+opacity:1;
+
+}
+
+}
+
+@keyframes slideRight{
+
+from{
+
+transform:translateX(100px);
+
+opacity:0;
+
+}
+
+to{
+
+transform:translateX(0);
+
+opacity:1;
+
+}
+
+}

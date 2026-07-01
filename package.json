@@ -1,0 +1,11 @@
+{
+  "name": "food-delivery-optimizer",
+  "version": "1.0.0",
+  "description": "Graph theory delivery logistics optimizer with C++ solver and visual dashboard",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "Vamshi Krishna",
+  "license": "MIT"
+}

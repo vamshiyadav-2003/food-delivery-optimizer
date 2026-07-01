@@ -1,0 +1,478 @@
+/* ==========================================================================
+   Quick Bite | Food Delivery Optimizer
+   Delivery Agent Portal Stylesheet
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --bg-color: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    --card-bg: #ffffff;
+    --text-color: #0f172a;
+    --text-muted: #64748b;
+    --primary-color: #3b82f6; /* Blue theme for riders */
+    --primary-hover: #2563eb;
+    --secondary-color: #475569;
+    --border-color: #cbd5e1;
+    
+    --green-color: #10b981;
+    --orange-color: #f59e0b;
+    --red-color: #ef4444;
+}
+
+/* Decorative Backdrop Glow Styles */
+.bg-glow {
+    position: fixed;
+    width: 450px;
+    height: 450px;
+    border-radius: 50%;
+    filter: blur(150px);
+    opacity: 0.55;
+    z-index: -1;
+    pointer-events: none;
+    transition: 0.5s ease-in-out;
+}
+.bg-glow-1 {
+    top: -100px;
+    right: -100px;
+    background: rgba(59, 130, 246, 0.22); /* Blue glow */
+}
+.bg-glow-2 {
+    bottom: -150px;
+    left: 200px;
+    background: rgba(16, 185, 129, 0.18); /* Green glow */
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    background: var(--bg-color);
+    color: var(--text-color);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header Navbar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 40px;
+    background-color: #1e293b;
+    color: white;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+.logo-emoji {
+    font-size: 26px;
+}
+
+.logo-text {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-left: 5px;
+}
+
+.rider-badge {
+    background-color: var(--primary-color);
+    color: white;
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-left: 10px;
+}
+
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    object-fit: cover;
+    border: 2px solid white;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.user-avatar:hover {
+    transform: scale(1.05);
+}
+
+.logout-link {
+    cursor: pointer;
+    font-size: 20px;
+    color: #94a3b8;
+    transition: 0.3s;
+}
+
+.logout-link:hover {
+    color: var(--red-color);
+}
+
+/* Layout Content Container */
+.content-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 30px 20px;
+    flex-grow: 1;
+}
+
+/* Overview Cards */
+.overview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.overview-card {
+    background-color: var(--card-bg);
+    border-radius: 16px;
+    padding: 20px 25px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+    border: 1px solid rgba(0,0,0,0.04);
+}
+
+.overview-card .icon {
+    font-size: 40px;
+    color: var(--primary-color);
+}
+
+.overview-card h3 {
+    font-size: 14px;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.overview-card h1 {
+    font-size: 28px;
+    font-weight: 700;
+    margin-top: 2px;
+}
+
+/* Workspace Panels Layout */
+.workspace-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 30px;
+}
+
+@media(max-width: 900px) {
+    .workspace-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.tasks-panel, .map-panel {
+    background-color: var(--card-bg);
+    border-radius: 20px;
+    padding: 25px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.02);
+    border: 1px solid rgba(0,0,0,0.04);
+}
+
+.panel-header {
+    border-bottom: 1px solid #f1f5f9;
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+}
+
+.panel-header h2 {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.panel-header small {
+    color: var(--text-muted);
+    font-size: 13px;
+}
+
+/* Active Task List & Cards */
+.tasks-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.task-card {
+    border: 1px solid #e2e8f0;
+    border-radius: 15px;
+    padding: 20px;
+    transition: 0.3s;
+    background-color: var(--card-bg);
+}
+
+.task-card:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.08);
+}
+
+.task-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px dashed #f1f5f9;
+    padding-bottom: 10px;
+    margin-bottom: 12px;
+}
+
+.task-card-header h4 {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.task-meta-info p {
+    font-size: 14px;
+    color: #475569;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.task-meta-info p i {
+    color: var(--text-muted);
+    width: 16px;
+}
+
+.task-actions {
+    margin-top: 15px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.no-tasks {
+    text-align: center;
+    padding: 50px 20px;
+    color: var(--text-muted);
+}
+
+.no-tasks i {
+    font-size: 50px;
+    margin-bottom: 15px;
+    color: var(--primary-color);
+    opacity: 0.7;
+}
+
+.no-tasks p {
+    font-size: 15px;
+}
+
+/* Route Map Canvas styling */
+.map-canvas-container {
+    width: 100%;
+    background-color: #f8fafc;
+    border-radius: 15px;
+    border: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+}
+
+#agentTrackingCanvas {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    background-color: #ffffff;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.tracking-details {
+    margin-top: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 15px;
+    background-color: #f8fafc;
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+}
+
+.details-text p {
+    font-size: 13px;
+    color: #334155;
+    margin-bottom: 2px;
+}
+
+/* Modals Overlay & Box */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+}
+
+.modal-box {
+    background-color: white;
+    width: 460px;
+    max-width: 90%;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    animation: slideUp 0.3s;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #f1f5f9;
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+}
+
+.modal-header h3 {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.close-icon {
+    font-size: 20px;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: 0.2s;
+}
+
+.close-icon:hover {
+    color: var(--red-color);
+}
+
+/* Form Styles */
+.form-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: #475569;
+    margin-bottom: 6px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    outline: none;
+    font-size: 14px;
+    transition: 0.3s;
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+/* Buttons style */
+.btn {
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 14px;
+    border: none;
+    cursor: pointer;
+    transition: 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background-color: #f1f5f9;
+    color: #475569;
+}
+
+.btn-secondary:hover {
+    background-color: #e2e8f0;
+}
+
+.btn-block {
+    width: 100%;
+    justify-content: center;
+}
+
+/* Status Pills */
+.status-pill {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.status-preparing {
+    background-color: rgba(245, 158, 11, 0.15);
+    color: var(--orange-color);
+}
+
+.status-on-route {
+    background-color: rgba(59, 130, 246, 0.15);
+    color: var(--primary-color);
+}
+
+.status-delivered {
+    background-color: rgba(16, 185, 129, 0.15);
+    color: var(--green-color);
+}
+
+/* Utility Helpers */
+.mt-15 { margin-top: 15px; }
+.mt-20 { margin-top: 20px; }
+.mt-30 { margin-top: 30px; }
+.mb-20 { margin-bottom: 20px; }
+.hidden { display: none !important; }
+
+/* Toast Messages */
+.toast {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    background-color: #1e293b;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 1000;
+}
+
+.success-toast { border-left: 4px solid var(--green-color); }
+.error-toast { border-left: 4px solid var(--red-color); }
+
+@keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}

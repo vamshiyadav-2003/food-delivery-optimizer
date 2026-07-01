@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Orders | Food Delivery Optimizer</title>
+
+<link rel="stylesheet" href="order.css">
+<script src="order.js"></script>
+
+<tbody id="ordersBody"></tbody>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css">
+
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="header">
+
+<h1>📦 Order Management</h1>
+
+<div class="search">
+
+<input type="text" id="searchOrder" placeholder="Search Order...">
+
+<button id="addOrder">
+<i class="fa-solid fa-plus"></i>
+Add Order
+</button>
+
+</div>
+
+</div>
+
+<div class="cards">
+
+<div class="card">
+<h3>Total Orders</h3>
+<h1>1245</h1>
+</div>
+
+<div class="card">
+<h3>Pending</h3>
+<h1>120</h1>
+</div>
+
+<div class="card">
+<h3>Delivered</h3>
+<h1>1095</h1>
+</div>
+
+<div class="card">
+<h3>Cancelled</h3>
+<h1>30</h1>
+</div>
+
+</div>
+
+<div class="table-box">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Order ID</th>
+<th>Customer</th>
+<th>Restaurant</th>
+<th>Amount</th>
+<th>Status</th>
+<th>Action</th>
+
+</tr>
+
+</thead>
+
+<tbody id="orderTable">
+
+<tr>
+
+<td>#1001</td>
+<td>Rahul</td>
+<td>Pizza Hub</td>
+<td>₹450</td>
+<td><span class="green">Delivered</span></td>
+
+<td>
+
+<button class="edit">
+Edit
+</button>
+
+<button class="delete">
+Delete
+</button>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>#1002</td>
+<td>Priya</td>
+<td>KFC</td>
+<td>₹620</td>
+<td><span class="orange">Preparing</span></td>
+
+<td>
+
+<button class="edit">
+Edit
+</button>
+
+<button class="delete">
+Delete
+</button>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>#1003</td>
+<td>Arjun</td>
+<td>Burger King</td>
+<td>₹300</td>
+<td><span class="blue">On Route</span></td>
+
+<td>
+
+<button class="edit">
+Edit
+</button>
+
+<button class="delete">
+Delete
+</button>
+
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+<script src="js/orders.js"></script>
+
+</body>
+
+</html>

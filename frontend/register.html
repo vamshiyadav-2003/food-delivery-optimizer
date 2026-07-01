@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Create Account</title>
+
+<link rel="stylesheet" href="form.css">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="left" style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
+
+<img src="https://res.cloudinary.com/dp2cvy0zy/image/upload/v1782800987/Black_White_Minimalist_Business_Logo_rhaakb-removebg-preview_negnb9.png" style="width: 100px; height: 100px; border-radius: 50%; background: white; padding: 6px; margin-bottom: 20px; box-shadow: 0 8px 16px rgba(0,0,0,0.15);" alt="Logo">
+
+<h1>Food Delivery Optimizer</h1>
+
+<p>
+Deliver Smarter. Serve Faster.
+</p>
+
+</div>
+
+<div class="right">
+
+<form id="registerForm">
+
+<h2>Create Account</h2>
+
+<div class="input-box">
+
+<i class="fa-solid fa-user"></i>
+
+<input type="text" id="fullname" placeholder="Full Name" required>
+
+</div>
+
+<div class="input-box">
+
+<i class="fa-solid fa-envelope"></i>
+
+<input type="email" id="email" placeholder="Email Address" required>
+
+</div>
+
+<div class="input-box">
+
+<i class="fa-solid fa-phone"></i>
+
+<input type="number" id="phone" placeholder="Phone Number" required>
+
+</div>
+
+<div class="input-box">
+
+<i class="fa-solid fa-lock"></i>
+
+<input type="password" id="password" placeholder="Password" required>
+
+</div>
+
+<div class="input-box">
+
+<i class="fa-solid fa-lock"></i>
+
+<input type="password" id="confirmPassword" placeholder="Confirm Password" required>
+
+</div>
+
+<div class="input-box">
+
+<i class="fa-solid fa-image"></i>
+
+<input type="url" id="avatar" placeholder="Profile Image URL (Optional)">
+
+</div>
+
+<div class="input-box">
+
+<i class="fa-solid fa-user-shield"></i>
+
+<select id="role" style="width: 100%; border: none; outline: none; background: transparent; padding: 10px 10px 10px 30px; font-size: 15px; color: #555; height: 100%;" required>
+    <option value="" disabled selected>Register As...</option>
+    <option value="Customer">Customer</option>
+    <option value="Administrator">Administrator (Admin Panel Access)</option>
+    <option value="Delivery Agent">Delivery Agent (Rider Console Access)</option>
+</select>
+
+</div>
+
+<button>
+
+Create Account
+
+</button>
+
+<p>
+
+Already have an account?
+
+<a href="login.html">
+
+Login
+
+</a>
+
+</p>
+
+</form>
+
+</div>
+
+</div>
+
+<script src="register.js"></script>
+
+
+</body>
+
+</html>

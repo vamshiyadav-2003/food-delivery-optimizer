@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Reports & Analytics</title>
+
+<link rel="stylesheet" href="reoprt.css">
+<script src="report.js"></script>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="header">
+
+<h1>📊 Reports & Analytics</h1>
+
+<div>
+
+<button id="pdf">Export PDF</button>
+
+<button id="excel">Export Excel</button>
+
+</div>
+
+</div>
+
+<div class="cards">
+
+<div class="card">
+
+<h3>Total Revenue</h3>
+
+<h1>₹26.4L</h1>
+
+</div>
+
+<div class="card">
+
+<h3>Total Orders</h3>
+
+<h1>1245</h1>
+
+</div>
+
+<div class="card">
+
+<h3>Success Rate</h3>
+
+<h1>98%</h1>
+
+</div>
+
+<div class="card">
+
+<h3>Avg Delivery</h3>
+
+<h1>22 min</h1>
+
+</div>
+
+</div>
+
+<div class="charts">
+
+<div class="chart-box">
+
+<h2>Monthly Revenue</h2>
+
+<canvas id="revenueChart"></canvas>
+
+</div>
+
+<div class="chart-box">
+
+<h2>Order Status</h2>
+
+<canvas id="statusChart"></canvas>
+
+</div>
+
+</div>
+
+<div class="performance">
+
+<h2>Top Delivery Agents</h2>
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Agent</th>
+<th>Orders</th>
+<th>Rating</th>
+<th>Performance</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>Rahul</td>
+
+<td>280</td>
+
+<td>⭐ 4.9</td>
+
+<td>Excellent</td>
+
+</tr>
+
+<tr>
+
+<td>Arjun</td>
+
+<td>245</td>
+
+<td>⭐ 4.8</td>
+
+<td>Very Good</td>
+
+</tr>
+
+<tr>
+
+<td>Sneha</td>
+
+<td>220</td>
+
+<td>⭐ 4.7</td>
+
+<td>Good</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+<script src="js/reports.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,11 @@
+CREATE TABLE restaurants(
+
+id INT PRIMARY KEY AUTO_INCREMENT,
+
+name VARCHAR(100),
+
+address VARCHAR(200),
+
+rating FLOAT
+
+);
