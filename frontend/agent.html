@@ -42,13 +42,12 @@
     <!-- Header Navigation -->
     <header class="navbar">
         <div class="nav-left" style="display: flex; align-items: center; gap: 12px;">
-            <button onclick="window.location.href='index.html'" style="background: var(--primary-color); color: white; border: none; padding: 6px 12px; border-radius: 20px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; font-size: 13px;"><i class="fa-solid fa-house"></i> Home</button>
+            <button onclick="window.history.back()" style="background: var(--primary-color); color: white; border: none; padding: 6px 12px; border-radius: 20px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; font-size: 13px;"><i class="fa-solid fa-arrow-left"></i> Back</button>
             <img src="https://res.cloudinary.com/dp2cvy0zy/image/upload/v1782800987/Black_White_Minimalist_Business_Logo_rhaakb-removebg-preview_negnb9.png" style="width: 38px; height: 38px; border-radius: 50%; background: white; border: 1px solid white; object-fit: cover;" alt="Logo">
             <span class="logo-text">Quick Bite</span>
             <span class="badge rider-badge">Rider Portal</span>
         </div>
         <div class="nav-right" style="display: flex; align-items: center; gap: 15px;">
-            <div id="google_translate_element"></div>
             <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150" class="user-avatar" id="agent-profile-avatar" alt="Rider Profile">
             <span class="logout-link" onclick="confirmAgentLogout()" title="Logout"><i class="fa-solid fa-right-from-bracket"></i></span>
         </div>
@@ -162,16 +161,5 @@
 
     <!-- Scripts -->
     <script src="agent.js"></script>
-    <!-- Google Translate API Widget -->
-    <script type="text/javascript">
-        function googleTranslateElementInit() {
-            new google.translate.TranslateElement({
-                pageLanguage: 'en',
-                includedLanguages: 'te,hi,en',
-                layout: google.translate.TranslateElement.InlineLayout.SIMPLE
-            }, 'google_translate_element');
-        }
-    </script>
-    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 </html>

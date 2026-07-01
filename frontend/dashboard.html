@@ -67,6 +67,10 @@
                 <i class="fa-solid fa-utensils"></i>
                 <span>Restaurants</span>
             </li>
+            <li class="nav-item" data-target="menuitems">
+                <i class="fa-solid fa-burger"></i>
+                <span>Food Items</span>
+            </li>
             <li class="nav-item" data-target="orders">
                 <i class="fa-solid fa-box"></i>
                 <span>Orders</span>
@@ -108,7 +112,6 @@
                 <h2 id="greeting-text" style="margin: 0;">Welcome Back 👋</h2>
             </div>
             <div class="top-right" style="display: flex; align-items: center; gap: 15px;">
-                <div id="google_translate_element"></div>
                 <div class="search-bar-container">
                     <i class="fa-solid fa-magnifying-glass"></i>
                     <input type="text" id="global-search" placeholder="Search orders, agents, restaurants...">
@@ -215,6 +218,44 @@
                 <div class="restaurant-grid" id="restaurant-grid-container">
                     <!-- Cards will be populated dynamically -->
                 </div>
+            </div>
+        </section>
+
+        <!-- ================= SECTION 2b: FOOD ITEMS / MENUS ================= -->
+        <section id="sec-menuitems" class="spa-section hidden">
+            <div class="section-header">
+                <h1>🍔 Food Item Management</h1>
+                <button class="btn btn-primary" onclick="openAddMenuItemModal()">
+                    <i class="fa-solid fa-plus"></i> Add Food Item
+                </button>
+            </div>
+
+            <!-- Restaurant filter tabs -->
+            <div class="table-box mt-20">
+                <div class="table-filters" style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                    <label style="font-weight:600; white-space:nowrap;">Select Restaurant:</label>
+                    <select id="menu-filter-restaurant" class="form-control" style="max-width:280px;" onchange="renderMenuItems()">
+                        <!-- populated dynamically -->
+                    </select>
+                    <input type="text" id="searchMenuItem" placeholder="Search food items..." style="flex:1; min-width:160px;" onkeyup="renderMenuItems()">
+                </div>
+
+                <!-- Menu items table -->
+                <table style="margin-top:15px;">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Item Name</th>
+                            <th>Description</th>
+                            <th>Price (₹)</th>
+                            <th>Restaurant</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="menu-items-table-body">
+                        <!-- populated dynamically -->
+                    </tbody>
+                </table>
             </div>
         </section>
 
@@ -521,7 +562,7 @@
 
             <div class="settings-container mt-20">
                 <div class="settings-profile-card">
-                    <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150" class="profile-pic" alt="Admin Profile">
+                    <img id="settings-profile-pic" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150" class="profile-pic" alt="Admin Profile">
                     <h2 id="settings-username-display">Vamshi Krishna</h2>
                     <p class="role">System Administrator</p>
                 </div>
@@ -542,7 +583,11 @@
                         </div>
                         <div class="form-group mt-15">
                             <label>Profile Image URL</label>
-                            <input type="url" id="set-avatar" class="form-control" value="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100" required>
+                            <input type="url" id="set-avatar" class="form-control" value="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100" required oninput="document.getElementById('settings-profile-pic').src=this.value; document.getElementById('profile-img').src=this.value;">
+                            <div style="margin-top:10px; display:flex; align-items:center; gap:10px;">
+                                <img id="avatar-live-preview" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100" style="width:52px; height:52px; border-radius:50%; object-fit:cover; border:3px solid #ff5722; box-shadow:0 4px 12px rgba(255,87,34,0.3);" alt="Preview">
+                                <span style="font-size:12px; color:#64748b;">Live preview of your profile photo</span>
+                            </div>
                         </div>
                         <div class="form-group mt-15">
                             <label>New Password</label>
@@ -597,7 +642,77 @@
     </div>
 
     <!-- ================= MODALS CONTAINER ================= -->
-    
+
+    <!-- FOOD ITEM MODAL (ADD / EDIT) -->
+    <div id="menuitem-modal" class="modal-overlay hidden">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 id="menuitem-modal-title">Add Food Item</h3>
+                <i class="fa-solid fa-xmark close-icon" onclick="closeModal('menuitem-modal')"></i>
+            </div>
+            <form id="menuitem-form" onsubmit="submitMenuItemForm(event)">
+                <input type="hidden" id="mi-form-idx">
+                <div class="form-group">
+                    <label>Select Restaurant</label>
+                    <select id="mi-form-restaurant" class="form-control" required>
+                        <!-- Dynamic -->
+                    </select>
+                </div>
+                <div class="form-group mt-15">
+                    <label>Item Name</label>
+                    <input type="text" id="mi-form-name" class="form-control" required placeholder="e.g. Pepperoni Pizza">
+                </div>
+                <div class="form-group mt-15">
+                    <label>Description</label>
+                    <input type="text" id="mi-form-desc" class="form-control" placeholder="Short description of the dish">
+                </div>
+                <div class="form-group mt-15">
+                    <label>Price (₹)</label>
+                    <input type="number" id="mi-form-price" class="form-control" min="1" required placeholder="e.g. 250">
+                </div>
+                <div class="form-group mt-15">
+                    <label>Food Type</label>
+                    <div style="display:flex; gap:16px; margin-top:6px;">
+                        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:14px;font-weight:500;">
+                            <input type="radio" name="mi-veg-type" id="mi-form-veg" value="veg" checked>
+                            <span style="display:inline-flex;align-items:center;gap:5px;">
+                                <span style="width:14px;height:14px;border:2px solid #16a34a;border-radius:3px;display:inline-flex;align-items:center;justify-content:center;">
+                                    <span style="width:7px;height:7px;background:#16a34a;border-radius:50%;"></span>
+                                </span>
+                                Vegetarian
+                            </span>
+                        </label>
+                        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:14px;font-weight:500;">
+                            <input type="radio" name="mi-veg-type" id="mi-form-nonveg" value="nonveg">
+                            <span style="display:inline-flex;align-items:center;gap:5px;">
+                                <span style="width:14px;height:14px;border:2px solid #dc2626;border-radius:3px;display:inline-flex;align-items:center;justify-content:center;">
+                                    <span style="width:7px;height:7px;background:#dc2626;border-radius:50%;"></span>
+                                </span>
+                                Non-Vegetarian
+                            </span>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group mt-15">
+                    <label>Image URL</label>
+                    <input type="url" id="mi-form-image" class="form-control" placeholder="https://images.unsplash.com/... (optional)">
+                </div>
+                <div class="form-group mt-15">
+                    <label>Discount (%)</label>
+                    <input type="number" id="mi-form-discount" class="form-control" min="0" max="99" value="0" placeholder="e.g. 10">
+                </div>
+                <div class="form-group mt-15" style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+                    <input type="checkbox" id="mi-form-bestseller" style="width:16px; height:16px; cursor:pointer;">
+                    <label for="mi-form-bestseller" style="margin:0; cursor:pointer; font-weight:500; font-size:14px;">Mark as Best Seller Item</label>
+                </div>
+                <div class="modal-footer mt-20">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('menuitem-modal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Item</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- RESTAURANT MODAL (ADD / EDIT) -->
     <div id="restaurant-modal" class="modal-overlay hidden">
         <div class="modal-box">
@@ -612,9 +727,20 @@
                     <input type="text" id="rest-form-name" class="form-control" required placeholder="e.g. Pizza Hub">
                 </div>
                 <div class="form-group mt-15">
-                    <label>City Address</label>
-                    <input type="text" id="rest-form-address" class="form-control" required placeholder="e.g. Hyderabad">
+                    <label>Full Address (Street, City)</label>
+                    <input type="text" id="rest-form-address" class="form-control" required placeholder="e.g. Shop 5, Ameerpet, Hyderabad">
                 </div>
+                <div class="form-group mt-15" style="display:flex; gap:12px;">
+                    <div style="flex:1;">
+                        <label><i class="fa-solid fa-location-crosshairs" style="color:#ff5722;"></i> Latitude</label>
+                        <input type="number" id="rest-form-lat" class="form-control" step="0.0001" placeholder="e.g. 17.4374" style="width:100%;">
+                    </div>
+                    <div style="flex:1;">
+                        <label><i class="fa-solid fa-location-crosshairs" style="color:#e91e63;"></i> Longitude</label>
+                        <input type="number" id="rest-form-lng" class="form-control" step="0.0001" placeholder="e.g. 78.4482" style="width:100%;">
+                    </div>
+                </div>
+                <p style="font-size:11px; color:#94a3b8; margin:6px 0 0 0;"><i class="fa-solid fa-circle-info"></i> Find lat/lng by right-clicking on <a href="https://maps.google.com" target="_blank" style="color:#ff5722;">Google Maps</a> → "What's here?"</p>
                 <div class="form-group mt-15">
                     <label>Rating</label>
                     <input type="number" id="rest-form-rating" class="form-control" step="0.1" min="1" max="5" value="4.5" required>
@@ -630,6 +756,7 @@
             </form>
         </div>
     </div>
+
 
     <!-- ORDER MODAL (ADD / EDIT) -->
     <div id="order-modal" class="modal-overlay hidden">
@@ -709,6 +836,17 @@
                         <option value="Offline">Offline</option>
                     </select>
                 </div>
+                <div class="form-group mt-15" style="display:flex; gap:12px;">
+                    <div style="flex:1;">
+                        <label><i class="fa-solid fa-location-crosshairs" style="color:#ff5722;"></i> Current Latitude</label>
+                        <input type="number" id="agent-form-lat" class="form-control" step="0.0001" placeholder="e.g. 17.4374" style="width:100%;">
+                    </div>
+                    <div style="flex:1;">
+                        <label><i class="fa-solid fa-location-crosshairs" style="color:#e91e63;"></i> Current Longitude</label>
+                        <input type="number" id="agent-form-lng" class="form-control" step="0.0001" placeholder="e.g. 78.4482" style="width:100%;">
+                    </div>
+                </div>
+                <p style="font-size:11px; color:#94a3b8; margin:6px 0 0 0;"><i class="fa-solid fa-circle-info"></i> Right-click on <a href="https://maps.google.com" target="_blank" style="color:#ff5722;">Google Maps</a> → "What's here?" to get coordinates.</p>
                 <div class="form-group mt-15">
                     <label>Agent Image URL</label>
                     <input type="url" id="agent-form-image" class="form-control" placeholder="Optional Unsplash image link">
@@ -726,16 +864,5 @@
 
     <!-- Main JavaScript File -->
     <script src="dashboard.js"></script>
-    <!-- Google Translate API Widget -->
-    <script type="text/javascript">
-        function googleTranslateElementInit() {
-            new google.translate.TranslateElement({
-                pageLanguage: 'en',
-                includedLanguages: 'te,hi,en',
-                layout: google.translate.TranslateElement.InlineLayout.SIMPLE
-            }, 'google_translate_element');
-        }
-    </script>
-    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 </html>

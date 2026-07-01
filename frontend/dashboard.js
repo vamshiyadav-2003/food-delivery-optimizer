@@ -36,11 +36,11 @@ let appState = {
     graph: {
         nodes: [
             { id: 0, name: "Agent Hub 🛵", x: 100, y: 200, type: "agent" },
-            { id: 1, name: "Pizza Hub 🍔", x: 220, y: 100, type: "restaurant" },
+            { id: 1, name: "Restaurant Zone A 🏠", x: 220, y: 100, type: "restaurant" },
             { id: 2, name: "Transit Hub A 📍", x: 300, y: 250, type: "transit" },
             { id: 3, name: "Transit Hub B 📍", x: 480, y: 120, type: "transit" },
-            { id: 4, name: "Customer Vamshi 🏠", x: 600, y: 280, type: "customer" },
-            { id: 5, name: "Burger King 🍔", x: 420, y: 340, type: "restaurant" }
+            { id: 4, name: "Customer Drop 🏡", x: 600, y: 280, type: "customer" },
+            { id: 5, name: "Restaurant Zone B 🏠", x: 420, y: 340, type: "restaurant" }
         ],
         edges: [
             { u: 0, v: 1, weight: 4 },
@@ -116,6 +116,9 @@ function initNavigation() {
                 renderDashboard();
             } else if (target === "restaurants") {
                 renderRestaurants();
+            } else if (target === "menuitems") {
+                populateMenuRestaurantDropdowns();
+                renderMenuItems();
             } else if (target === "orders") {
                 renderOrders();
             } else if (target === "routes") {
@@ -202,6 +205,46 @@ function loadInitialData() {
         appState.agents = JSON.parse(localStorage.getItem("quickbite_agents"));
     } else {
         localStorage.setItem("quickbite_agents", JSON.stringify(appState.agents));
+    }
+
+    // Load menus from localStorage, or seed defaults for the 4 built-in restaurants
+    if (localStorage.getItem("quickbite_menus")) {
+        appState.menus = JSON.parse(localStorage.getItem("quickbite_menus"));
+        let needsMigration = false;
+        appState.menus.forEach(item => {
+            if (!item.hasOwnProperty('isVeg')) {
+                needsMigration = true;
+                item.isVeg = !(
+                    item.name.toLowerCase().includes('chicken') || 
+                    item.name.toLowerCase().includes('pepperoni') || 
+                    item.name.toLowerCase().includes('wings') || 
+                    item.name.toLowerCase().includes('whopper') || 
+                    item.name.toLowerCase().includes('popcorn') ||
+                    item.name.toLowerCase().includes('biryani') ||
+                    item.name.toLowerCase().includes('mutton') ||
+                    item.name.toLowerCase().includes('fish')
+                );
+            }
+        });
+        if (needsMigration) {
+            localStorage.setItem("quickbite_menus", JSON.stringify(appState.menus));
+        }
+    } else {
+        appState.menus = [
+            { id: 1, restaurantId: 1, name: "Pepperoni Special Pizza",       price: 450, desc: "Classic pepperoni slices with loaded cheese", isVeg: false },
+            { id: 2, restaurantId: 1, name: "Margherita Pizza",               price: 300, desc: "Fresh basil, tomato sauce, mozzarella cheese", isVeg: true },
+            { id: 3, restaurantId: 1, name: "Garlic Bread Sticks",            price: 120, desc: "Baked dough sticks brushed with garlic butter", isVeg: true },
+            { id: 4, restaurantId: 2, name: "Double Whopper Burger",          price: 250, desc: "Flame-grilled beef patty, lettuce, mayo, pickles", isVeg: false },
+            { id: 5, restaurantId: 2, name: "Crispy Veggie Burger",           price: 180, desc: "Crumb-coated potato-veggie patty with special sauce", isVeg: true },
+            { id: 6, restaurantId: 2, name: "Onion Rings Basket",             price: 120, desc: "Deep-fried breaded sweet onion rings", isVeg: true },
+            { id: 7, restaurantId: 3, name: "Farmhouse Cheese Burst Pizza",   price: 500, desc: "Mushrooms, onions, capsicum, tomatoes, extra cheese", isVeg: true },
+            { id: 8, restaurantId: 3, name: "Peppy Paneer Pizza",             price: 420, desc: "Spiced paneer chunks, capsicum, red paprika", isVeg: true },
+            { id: 9, restaurantId: 3, name: "Stuffed Garlic Bread",           price: 160, desc: "Garlic bread stuffed with sweet corn and paneer", isVeg: true },
+            { id: 10, restaurantId: 4, name: "Zinger Burger Meal",            price: 280, desc: "Crispy chicken zinger burger, fries, and drink", isVeg: false },
+            { id: 11, restaurantId: 4, name: "10 Pcs Chicken Popcorn",        price: 180, desc: "Bite-sized tender crispy chicken pieces", isVeg: false },
+            { id: 12, restaurantId: 4, name: "Hot Wings Bucket (6 Pcs)",      price: 240, desc: "Spicy breaded chicken wings fried to perfection", isVeg: false }
+        ];
+        localStorage.setItem("quickbite_menus", JSON.stringify(appState.menus));
     }
 
     // Set Settings page default values
@@ -353,6 +396,9 @@ function renderRestaurants() {
                     <p><i class="fa-solid fa-location-dot"></i> Address: ${r.address}</p>
                     <p><i class="fa-solid fa-star" style="color: #ff9800;"></i> Rating: <strong>${r.rating}</strong></p>
                     <div class="restaurant-card-actions">
+                        <button class="btn btn-secondary btn-sm" onclick="openManageMenuModal(${r.id})" style="color: var(--primary-color);">
+                            <i class="fa-solid fa-burger"></i> Menu Items
+                        </button>
                         <button class="btn btn-secondary btn-sm" onclick="openEditRestaurantModal(${r.id})">
                             <i class="fa-solid fa-pen-to-square"></i> Edit
                         </button>
@@ -548,37 +594,43 @@ function openEditRestaurantModal(id) {
     document.getElementById("rest-form-address").value = r.address;
     document.getElementById("rest-form-rating").value = r.rating;
     document.getElementById("rest-form-image").value = r.image;
+    document.getElementById("rest-form-lat").value = r.lat || "";
+    document.getElementById("rest-form-lng").value = r.lng || "";
     
     openModal("restaurant-modal");
 }
 
 function submitRestaurantForm(e) {
     e.preventDefault();
-    const id = document.getElementById("rest-form-id").value;
-    const name = document.getElementById("rest-form-name").value;
+    const id      = document.getElementById("rest-form-id").value;
+    const name    = document.getElementById("rest-form-name").value;
     const address = document.getElementById("rest-form-address").value;
-    const rating = parseFloat(document.getElementById("rest-form-rating").value);
-    let image = document.getElementById("rest-form-image").value;
+    const rating  = parseFloat(document.getElementById("rest-form-rating").value);
+    const latVal  = document.getElementById("rest-form-lat").value;
+    const lngVal  = document.getElementById("rest-form-lng").value;
+    const lat     = latVal  ? parseFloat(latVal)  : null;
+    const lng     = lngVal  ? parseFloat(lngVal)  : null;
+    let image     = document.getElementById("rest-form-image").value;
 
     if (!image) {
-        image = "https://images.unsplash.com/photo-1498837167922-ddd27525d352?w=600"; // fallback food img
+        image = "https://images.unsplash.com/photo-1498837167922-ddd27525d352?w=600";
     }
 
     if (id) {
         // Edit Mode
         const index = appState.restaurants.findIndex(r => r.id === parseInt(id));
         if (index !== -1) {
-            appState.restaurants[index] = { id: parseInt(id), name, address, rating, image };
+            appState.restaurants[index] = { id: parseInt(id), name, address, rating, image, lat, lng };
             showToast("Restaurant updated successfully", "success");
         }
     } else {
         // Add Mode
         const newId = appState.restaurants.length > 0 ? Math.max(...appState.restaurants.map(r => r.id)) + 1 : 1;
-        appState.restaurants.push({ id: newId, name, address, rating, image });
+        appState.restaurants.push({ id: newId, name, address, rating, image, lat, lng });
         showToast("New restaurant added successfully", "success");
     }
 
-    // Save database
+    // Save to shared database (localStorage)
     localStorage.setItem("quickbite_restaurants", JSON.stringify(appState.restaurants));
 
     closeModal("restaurant-modal");
@@ -682,6 +734,9 @@ function openEditAgentModal(id) {
     document.getElementById("agent-form-rating").value = a.rating;
     document.getElementById("agent-form-status").value = a.status;
     document.getElementById("agent-form-image").value = a.image_url || '';
+    // Populate latitude and longitude if available
+    document.getElementById("agent-form-lat").value = a.lat || '';
+    document.getElementById("agent-form-lng").value = a.lng || '';
 
     openModal("agent-modal");
 }
@@ -701,14 +756,14 @@ function submitAgentForm(e) {
         const index = appState.agents.findIndex(a => a.id === id);
         if (index !== -1) {
             const old = appState.agents[index];
-            appState.agents[index] = { ...old, name, vehicle, phone, rating, status, image_url };
+            appState.agents[index] = { ...old, name, vehicle, phone, rating, status, image_url, lat: document.getElementById("agent-form-lat").value, lng: document.getElementById("agent-form-lng").value };
             showToast("Agent info saved", "success");
         }
     } else {
         // Add Mode
         const count = appState.agents.length + 1;
         const newId = "A00" + count;
-        appState.agents.push({ id: newId, name, vehicle, phone, rating, status, ordersCount: 0, location: "Hub", image_url });
+        appState.agents.push({ id: newId, name, vehicle, phone, rating, status, ordersCount: 0, location: "Hub", image_url, lat: document.getElementById("agent-form-lat").value, lng: document.getElementById("agent-form-lng").value });
         showToast("New agent registered", "success");
     }
 
@@ -730,7 +785,10 @@ function deleteAgent(id) {
 
 // Helpers
 function populateRestaurantDropdowns() {
-    const selects = [document.getElementById("order-form-restaurant")];
+    const selects = [
+        document.getElementById("order-form-restaurant"),
+        document.getElementById("mi-form-restaurant")
+    ];
     selects.forEach(select => {
         if (!select) return;
         select.innerHTML = "";
@@ -738,6 +796,217 @@ function populateRestaurantDropdowns() {
             select.innerHTML += `<option value="${r.id}">${r.name}</option>`;
         });
     });
+}
+
+function populateMenuRestaurantDropdowns() {
+    // Fill the filter dropdown in the Food Items section
+    const filterSel = document.getElementById("menu-filter-restaurant");
+    if (!filterSel) return;
+    const prev = filterSel.value;
+    filterSel.innerHTML = `<option value="">All Restaurants</option>`;
+    appState.restaurants.forEach(r => {
+        filterSel.innerHTML += `<option value="${r.id}">${r.name}</option>`;
+    });
+    // Restore selection if still valid
+    if (prev && appState.restaurants.find(r => String(r.id) === prev)) {
+        filterSel.value = prev;
+    }
+    // Also repopulate the modal dropdown
+    populateRestaurantDropdowns();
+}
+
+// ----------------------------------------------------------
+// Menu Items CRUD
+// ----------------------------------------------------------
+function renderMenuItems() {
+    const tbody = document.getElementById("menu-items-table-body");
+    if (!tbody) return;
+    tbody.innerHTML = "";
+
+    const filterRestId = document.getElementById("menu-filter-restaurant").value;
+    const searchVal = (document.getElementById("searchMenuItem").value || "").toLowerCase();
+
+    let items = appState.menus || [];
+
+    if (filterRestId) {
+        items = items.filter(m => String(m.restaurantId) === filterRestId);
+    }
+    if (searchVal) {
+        items = items.filter(m => m.name.toLowerCase().includes(searchVal) || (m.desc || "").toLowerCase().includes(searchVal));
+    }
+
+    if (items.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding:30px;">No food items found. Click "Add Food Item" to get started.</td></tr>`;
+        return;
+    }
+
+    items.forEach((item, idx) => {
+        const rest = appState.restaurants.find(r => r.id === item.restaurantId) || { name: "Unknown" };
+        const vegDot = item.isVeg
+            ? `<span title="Veg" style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border:2px solid #16a34a;border-radius:3px;margin-right:6px;"><span style="width:8px;height:8px;border-radius:50%;background:#16a34a;"></span></span>`
+            : `<span title="Non-Veg" style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border:2px solid #dc2626;border-radius:3px;margin-right:6px;"><span style="width:8px;height:8px;border-radius:50%;background:#dc2626;"></span></span>`;
+        
+        // Image preview
+        const imgHtml = item.image
+            ? `<img src="${item.image}" style="width:36px; height:36px; object-fit:cover; border-radius:6px; margin-right:8px;" onerror="this.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=100'"/>`
+            : `<span style="width:36px; height:36px; border-radius:6px; background:#f1f5f9; display:inline-flex; align-items:center; justify-content:center; margin-right:8px; color:#94a3b8; font-size:12px;"><i class="fa-solid fa-image"></i></span>`;
+
+        // Discounted price
+        const hasDiscount = item.discount && parseInt(item.discount) > 0;
+        const discountVal = hasDiscount ? parseInt(item.discount) : 0;
+        const discPrice = hasDiscount ? Math.round(item.price * (1 - discountVal / 100)) : item.price;
+        const priceHtml = hasDiscount
+            ? `<span>₹${discPrice} <small style="text-decoration:line-through; color:#94a3b8; margin-left:4px;">₹${item.price}</small> <span style="background:#fef2f2; color:#ef4444; border:1px solid #fee2e2; border-radius:4px; padding:1px 4px; font-size:10px; font-weight:700; margin-left:4px;">${discountVal}% OFF</span></span>`
+            : `<span>₹${item.price}</span>`;
+
+        // Best seller badge
+        const bestSellerBadge = item.isBestSeller
+            ? `<span style="background:linear-gradient(135deg, #f59e0b, #d97706); color:white; border-radius:6px; padding:2px 6px; font-size:10px; font-weight:800; text-transform:uppercase; margin-left:8px; display:inline-flex; align-items:center; gap:2px;"><i class="fa-solid fa-star"></i> Best Seller</span>`
+            : ``;
+
+        tbody.innerHTML += `
+            <tr>
+                <td>${idx + 1}</td>
+                <td>
+                    <span style="display:flex;align-items:center;">
+                        ${imgHtml}
+                        <span style="display:flex; flex-direction:column;">
+                            <span style="display:flex; align-items:center;">
+                                ${vegDot}<strong>${item.name}</strong>
+                                ${bestSellerBadge}
+                            </span>
+                        </span>
+                    </span>
+                </td>
+                <td style="color:var(--text-muted); font-size:13px;">${item.desc || "—"}</td>
+                <td>${priceHtml}</td>
+                <td>${rest.name}</td>
+                <td>
+                    <div class="table-actions">
+                        <button class="action-btn edit-btn" onclick="openEditMenuItemModal(${item.id})" title="Edit Item">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </button>
+                        <button class="action-btn delete-btn" onclick="deleteMenuItem(${item.id})" title="Delete Item">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `;
+    });
+}
+
+function openAddMenuItemModal(presetRestaurantId = null) {
+    document.getElementById("menuitem-modal-title").innerText = "Add Food Item";
+    document.getElementById("mi-form-idx").value = "";
+    document.getElementById("menuitem-form").reset();
+    populateRestaurantDropdowns();
+    if (presetRestaurantId) {
+        const sel = document.getElementById("mi-form-restaurant");
+        if (sel) sel.value = presetRestaurantId;
+    }
+    openModal("menuitem-modal");
+}
+
+function openEditMenuItemModal(id) {
+    const item = (appState.menus || []).find(m => m.id === id);
+    if (!item) return;
+    document.getElementById("menuitem-modal-title").innerText = "Edit Food Item";
+    document.getElementById("mi-form-idx").value = item.id;
+    populateRestaurantDropdowns();
+    document.getElementById("mi-form-restaurant").value = item.restaurantId;
+    document.getElementById("mi-form-name").value = item.name;
+    document.getElementById("mi-form-desc").value = item.desc || "";
+    document.getElementById("mi-form-price").value = item.price;
+    // Restore veg/nonveg radio
+    document.getElementById(item.isVeg ? "mi-form-veg" : "mi-form-nonveg").checked = true;
+    
+    // Restore new fields
+    document.getElementById("mi-form-image").value = item.image || "";
+    document.getElementById("mi-form-discount").value = item.discount || 0;
+    document.getElementById("mi-form-bestseller").checked = !!item.isBestSeller;
+    
+    openModal("menuitem-modal");
+}
+
+function openManageMenuModal(restaurantId) {
+    // Switch to menuitems section and pre-filter to that restaurant
+    document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
+    const menuNav = document.querySelector(".nav-item[data-target='menuitems']");
+    if (menuNav) menuNav.classList.add("active");
+    document.querySelectorAll(".spa-section").forEach(s => s.classList.add("hidden"));
+    const sec = document.getElementById("sec-menuitems");
+    if (sec) sec.classList.remove("hidden");
+    populateMenuRestaurantDropdowns();
+    const filterSel = document.getElementById("menu-filter-restaurant");
+    if (filterSel) filterSel.value = restaurantId;
+    renderMenuItems();
+}
+
+function submitMenuItemForm(e) {
+    e.preventDefault();
+    if (!appState.menus) appState.menus = [];
+
+    const id = document.getElementById("mi-form-idx").value;
+    const restaurantId = parseInt(document.getElementById("mi-form-restaurant").value);
+    const name = document.getElementById("mi-form-name").value.trim();
+    const desc = document.getElementById("mi-form-desc").value.trim();
+    const price = parseInt(document.getElementById("mi-form-price").value);
+    const isVeg = document.getElementById("mi-form-veg").checked;
+    
+    // Get new fields
+    const image = document.getElementById("mi-form-image").value.trim();
+    const discount = parseInt(document.getElementById("mi-form-discount").value) || 0;
+    const isBestSeller = document.getElementById("mi-form-bestseller").checked;
+
+    if (id) {
+        // Edit mode
+        const index = appState.menus.findIndex(m => m.id === parseInt(id));
+        if (index !== -1) {
+            appState.menus[index] = { 
+                id: parseInt(id), 
+                restaurantId, 
+                name, 
+                desc, 
+                price, 
+                isVeg,
+                image,
+                discount,
+                isBestSeller
+            };
+            showToast("Food item updated", "success");
+        }
+    } else {
+        // Add mode
+        const newId = appState.menus.length > 0 ? Math.max(...appState.menus.map(m => m.id)) + 1 : 1;
+        appState.menus.push({ 
+            id: newId, 
+            restaurantId, 
+            name, 
+            desc, 
+            price, 
+            isVeg,
+            image,
+            discount,
+            isBestSeller
+        });
+        showToast(`"${name}" added to menu`, "success");
+    }
+
+    localStorage.setItem("quickbite_menus", JSON.stringify(appState.menus));
+    closeModal("menuitem-modal");
+    renderMenuItems();
+}
+
+function deleteMenuItem(id) {
+    const item = (appState.menus || []).find(m => m.id === id);
+    if (!item) return;
+    if (confirm(`Remove "${item.name}" from the menu?`)) {
+        appState.menus = appState.menus.filter(m => m.id !== id);
+        localStorage.setItem("quickbite_menus", JSON.stringify(appState.menus));
+        showToast("Menu item removed", "error");
+        renderMenuItems();
+    }
 }
 
 // ---------------------------------------------------------
@@ -772,11 +1041,11 @@ function initGraphBuilder() {
         appState.graph = {
             nodes: [
                 { id: 0, name: "Agent Hub 🛵", x: 100, y: 200, type: "agent" },
-                { id: 1, name: "Pizza Hub 🍔", x: 220, y: 100, type: "restaurant" },
+                { id: 1, name: "Restaurant Zone A 🏠", x: 220, y: 100, type: "restaurant" },
                 { id: 2, name: "Transit Hub A 📍", x: 300, y: 250, type: "transit" },
                 { id: 3, name: "Transit Hub B 📍", x: 480, y: 120, type: "transit" },
-                { id: 4, name: "Customer Vamshi 🏠", x: 600, y: 280, type: "customer" },
-                { id: 5, name: "Burger King 🍔", x: 420, y: 340, type: "restaurant" }
+                { id: 4, name: "Customer Drop 🏡", x: 600, y: 280, type: "customer" },
+                { id: 5, name: "Restaurant Zone B 🏠", x: 420, y: 340, type: "restaurant" }
             ],
             edges: [
                 { u: 0, v: 1, weight: 4 },
